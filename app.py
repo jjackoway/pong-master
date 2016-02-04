@@ -4,14 +4,15 @@ from bson import json_util, CodecOptions, SON
 from pymongo import MongoClient
 from trueskill import Rating, rate_1vs1, TrueSkill
 from tabulate import tabulate
-import datetime, os
+import datetime, os, requests
 
 app = Flask(__name__)
 api = Api(app)
 parser = reqparse.RequestParser()
-parser.add_argument('name')
-parser.add_argument('winner')
-parser.add_argument('loser')
+parser.add_argument('token')
+parser.add_argument('text')
+parser.add_argument('response_url')
+
 
 env = TrueSkill(draw_probability = 0.0, backend = 'mpmath', tau = .41666666667)
 env.make_as_global()
@@ -20,17 +21,28 @@ def floor(mu, sigma):
     floor_factor = 2.0
     return mu - floor_factor * sigma
 
-class Players(Resource):
+class Root(Resource):
     def post(self):
         args = parser.parse_args()
-        this_player = players.find_one({'name': args['name']})
-        if(this_player):
-            return Response(json_util.dumps(this_player), mimetype='application/json')
-        else:
-            rating = Rating()
-            player = {'name': args['name'], 'mu': rating.mu, 'sigma': rating.sigma, 'score': floor(rating.mu, rating.sigma)}
-            players.insert_one(player)
-            return Response(json_util.dumps(player), mimetype='application/json')
+        print args['text']
+        print args['response_url']
+        text = args['text'].lower().split()
+        subcommand = text[0]
+        callback_url = args['response_url']
+
+        #Register a new user
+        if subcommand == 'register':
+            name = text[1]
+            this_player = players.find_one({'name': name})
+            if(this_player):
+                requests.post(callback_url, data=this_player.name+' is already registered!')
+                # return Response(json_util.dumps(this_player), mimetype='application/json')
+            else:
+                rating = Rating()
+                player = {'name': args['name'], 'mu': rating.mu, 'sigma': rating.sigma, 'score': floor(rating.mu, rating.sigma)}
+                players.insert_one(player)
+                requests.post(callback_url, data=this_player.name+' is now registered!')
+                # return Response(json_util.dumps(player), mimetype='application/json')
     def get(self):
         # return Response(json_util.dumps(players.find()), mimetype='application/json')
         return Response(tabulate(players.find(), headers='keys'), mimetype='text/plain')
@@ -64,8 +76,8 @@ class Games(Resource):
         return Response(json_util.dumps(players.find()), mimetype='application/json')
 
 
-api.add_resource(Players, '/players')
-api.add_resource(Games, '/games')
+api.add_resource(Root, '/')
+# api.add_resource(Games, '/games')
 
 if __name__ == '__main__':
     opts = CodecOptions(document_class=SON)
