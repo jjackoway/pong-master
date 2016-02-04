@@ -45,7 +45,7 @@ class Root(Resource):
                 rating = Rating()
                 player = {'name': name, 'mu': rating.mu, 'sigma': rating.sigma, 'score': floor(rating.mu, rating.sigma)}
                 players.insert_one(player)
-                requests.post(callback_url, data=player.name+' is now registered!')
+                requests.post(callback_url, data={'info': this_player['name']+' is already registered!'})
                 # return Response(json_util.dumps(player), mimetype='application/json')
     def get(self):
         # return Response(json_util.dumps(players.find()), mimetype='application/json')
