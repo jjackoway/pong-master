@@ -45,6 +45,14 @@ class Root(Resource):
                 player = {'name': name, 'mu': rating.mu, 'sigma': rating.sigma, 'score': floor(rating.mu, rating.sigma)}
                 players.insert_one(player)
                 return name + ' was created!'
+        elif subcommand == 'delete':
+            name = text[1]
+            result = players.delete_one({'name': name})
+            if result > 0:
+                return "Kaboom. No more "+name+"."
+            else:
+                return "Couldnt seem to find "+name+"."
+
         elif subcommand == 'scores':
             return Response('```\n'+tabulate(players.find(), headers='keys', tablefmt='fancy_grid')+'\n```\n', mimetype='text/plain')
         elif subcommand == 'record':
