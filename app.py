@@ -28,11 +28,13 @@ class Root(Resource):
         print args['response_url']
         text = args['text'].lower().split()
         subcommand = text[0]
+        print "Subcommand: " + subcommand
         callback_url = args['response_url']
 
         #Register a new user
         if subcommand == 'register':
             name = text[1]
+            print "Name to register: " + name
             this_player = players.find_one({'name': name})
             if(this_player):
                 requests.post(callback_url, data=this_player.name+' is already registered!')
