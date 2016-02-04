@@ -44,7 +44,7 @@ class Root(Resource):
                 rating = Rating()
                 player = {'name': name, 'mu': rating.mu, 'sigma': rating.sigma, 'score': floor(rating.mu, rating.sigma)}
                 players.insert_one(player)
-                return this_player['name']+ ' was created!'
+                return name + ' was created!'
     def get(self):
         return Response(json_util.dumps(players.find()), mimetype='application/json')
 
