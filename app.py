@@ -45,8 +45,55 @@ class Root(Resource):
                 player = {'name': name, 'mu': rating.mu, 'sigma': rating.sigma, 'score': floor(rating.mu, rating.sigma)}
                 players.insert_one(player)
                 return name + ' was created!'
-    def get(self):
-        return Response(json_util.dumps(players.find()), mimetype='application/json')
+        elif subcommand == 'scores':
+            return Response(json_util.dumps(players.find()), mimetype='application/json')
+        elif subcommand == 'record':
+            player1 = text[1]
+            operator = text[2]
+            player3 = text[3]
+
+            if operator != '>' and operator != '<':
+                return "Sorry, who won? Should be like 'player1' > 'player2'."
+            elif operator == '>':
+                winner_name = player1
+                loser_name = player2
+            else:
+                winner_name = player2
+                loser_name = player1
+
+            if winner_name and loser_name:
+                winner = players.find_one({'name': winner_name})
+                loser = players.find_one({'name': loser_name})
+                if winner and loser:
+                    winner_rating = Rating(winner['mu'], winner['sigma'])
+                    loser_rating = Rating(loser['mu'], loser['sigma'])
+                    winner_rating, loser_rating = rate_1vs1(winner_rating, loser_rating)
+
+                    new_winner = {'name': winner['name'],
+                                    'mu': winner_rating.mu,
+                                    'sigma': winner_rating.sigma,
+                                    'score': floor(winner_rating.mu, winner_rating.sigma)
+                                }
+                    players.replace_one({'name': winner['name']}, new_winner)
+
+                    new_loser = {'name': loser['name'],
+                                    'mu': loser_rating.mu,
+                                    'sigma': loser_rating.sigma,
+                                    'score': floor(loser_rating.mu, loser_rating.sigma)
+                                }
+                    players.replace_one({'name': loser['name']}, new_loser)
+
+                    game = {'winner': winner['name'],
+                                'loser': loser['name'],
+                                'date': datetime.datetime.utcnow()
+                           }
+                    games.insert_one(game)
+                    return "Mmmmm. Games. Feed me more games!"
+                else:
+                    return "Couldn't find one or more players you put in..."
+            else:
+                return "Please pass in valid player names"
+
 
 class Games(Resource):
     def post(self):
