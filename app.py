@@ -70,7 +70,7 @@ api.add_resource(Games, '/games')
 if __name__ == '__main__':
     opts = CodecOptions(document_class=SON)
     mongo = MongoClient(os.environ['MONGO'])
-    db = mongo.pong_master
+    db = mongo[os.environ['DATABASE']]
     games = db.games.with_options(codec_options=opts)
     players = db.players.with_options(codec_options=opts)
     isDebug = True
