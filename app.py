@@ -39,17 +39,14 @@ class Root(Resource):
             print "Name to register: " + name
             this_player = players.find_one({'name': name})
             if(this_player):
-                requests.post(callback_url, data={'info': this_player['name']+' is already registered!'})
-                # return Response(json_util.dumps(this_player), mimetype='application/json')
+                return this_player['name']+ ' already exists.'
             else:
                 rating = Rating()
                 player = {'name': name, 'mu': rating.mu, 'sigma': rating.sigma, 'score': floor(rating.mu, rating.sigma)}
                 players.insert_one(player)
-                # requests.post(callback_url, data={'info': this_player['name']+' is already registered!'})
-                return Response(json_util.dumps(player), mimetype='application/json')
+                return this_player['name']+ ' was created!'
     def get(self):
         return Response(json_util.dumps(players.find()), mimetype='application/json')
-        # return Response(tabulate(players.find(), headers='keys'), mimetype='text/plain')
 
 class Games(Resource):
     def post(self):
