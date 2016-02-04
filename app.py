@@ -77,7 +77,7 @@ if __name__ == '__main__':
     port = 5000
 
     if 'ENV' in os.environ:
-        isDebug = os.environ['ENV']
+        isDebug = os.environ['ENV'].lower() != 'prod' ? True : False
     if 'PORT' in os.environ:
         port=int(os.environ['PORT'])
     app.run(port=port, debug=isDebug)
