@@ -80,4 +80,4 @@ if __name__ == '__main__':
         isDebug = True if (os.environ['ENV'].lower() != 'prod') else False
     if 'PORT' in os.environ:
         port=int(os.environ['PORT'])
-    app.run(host=0.0.0.0, port=port, debug=isDebug)
+    app.run(host='0.0.0.0', port=port, debug=isDebug)
