@@ -73,11 +73,11 @@ if __name__ == '__main__':
     db = mongo.pong_master
     games = db.games.with_options(codec_options=opts)
     players = db.players.with_options(codec_options=opts)
+    isDebug = True
+    port = 5000
 
-    try:
-        isDebug = (os.environ['ENV'] != 'prod')
-    except KeyError:
-        print "ENV not provided, debug will be on."
-        isDebug = True
-
-    app.run(debug=isDebug)
+    if 'ENV' in os.environ:
+        isDebug = os.environ['ENV']
+    if 'PORT' in os.environ:
+        port=int(os.environ['PORT'])
+    app.run(port=port, debug=isDebug)
