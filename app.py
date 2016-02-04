@@ -46,12 +46,16 @@ class Root(Resource):
                 players.insert_one(player)
                 return name + ' was created!'
         elif subcommand == 'delete':
-            name = text[1]
-            result = players.delete_one({'name': name})
-            if result > 0:
-                return "Kaboom. No more "+name+"."
-            else:
-                return "Couldnt seem to find "+name+"."
+            names = text[1:]
+            deleted = []
+            for name in names:
+                result = players.delete_one({'name': name})
+                if result > 0:
+                    deleted.push(name)
+            if(deleted.length == 0):
+                return "Couldn't find the player(s) you entered."
+            deleted.join(',')
+            return "Kaboom. No more "+deleted+'.'
 
         elif subcommand == 'scores':
             return Response('```\n'+tabulate(players.find(), headers='keys', tablefmt='fancy_grid')+'\n```\n', mimetype='text/plain')
