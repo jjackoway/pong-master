@@ -1,4 +1,4 @@
-from flask import Flask, Response
+from flask import Flask, Response, request
 from flask_restful import Resource, Api, reqparse
 from bson import json_util, CodecOptions, SON
 from pymongo import MongoClient
@@ -24,6 +24,8 @@ def floor(mu, sigma):
 class Root(Resource):
     def post(self):
         args = parser.parse_args()
+        print request.data
+        print request.headers
         print args['text']
         print args['response_url']
         text = args['text'].lower().split()
