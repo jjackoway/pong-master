@@ -46,7 +46,7 @@ class Root(Resource):
                 players.insert_one(player)
                 return name + ' was created!'
         elif subcommand == 'scores':
-            return Response(tabulate(json_util.dumps(players.find())), mimetype='text/plain')
+            return Response(tabulate(players.find()), mimetype='text/plain')
         elif subcommand == 'record':
             player1 = text[1]
             operator = text[2]
