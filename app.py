@@ -120,7 +120,7 @@ class Root(Resource):
                                 'date': datetime.datetime.utcnow()
                            }
                     games.insert_one(game)
-                    return "Mmmmm. Games. Feed me more games!"
+                    return "Congrats, " + winner_name + "!"
                 else:
                     return "Couldn't find one or more players you put in..."
             else:
