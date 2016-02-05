@@ -32,11 +32,12 @@ class Root(Resource):
         print "Subcommand: " + subcommand
 
         #Register a new user
-        if subcommand == 'register':
+        if subcommand == 'add':
             names = text[1:]
             exists = []
             added = []
             for name in names:
+                name = name.lower()
                 this_player = players.find_one({'name': name})
                 if(this_player):
                     exists.append(this_player['name'])
@@ -80,9 +81,9 @@ class Root(Resource):
         elif subcommand == 'games':
             return Response('```\n'+tabulate(games.find(), headers='keys', tablefmt='fancy_grid')+'\n```\n', mimetype='text/plain')
         elif subcommand == 'record':
-            player1 = text[1]
+            player1 = text[1].lower()
             operator = text[2]
-            player2 = text[3]
+            player2 = text[3].lower()
 
             if operator != '>' and operator != '<':
                 return "Sorry, who won? Should be like 'player1' > 'player2'."
