@@ -42,7 +42,7 @@ class Root(Resource):
                 player = {'name': name, 'mu': rating.mu, 'sigma': rating.sigma, 'score': floor(rating.mu, rating.sigma)}
                 players.insert_one(player)
                 # return name + ' was created!'
-                requests.post(args['response_url'], data={'text': name + ' was created!'})
+                requests.post(args['response_url'], json={'text': name + ' was created!'})
         elif subcommand == 'delete':
             names = text[1:]
             deleted = []
