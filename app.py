@@ -77,7 +77,7 @@ class Root(Resource):
                     score['sigma']
                 ]
                 return_scores.append(return_score)
-            return Response('```\n'+tabulate(return_scores, headers=headers, tablefmt='fancy_grid')+'\n```\n', mimetype='application/')
+            return Response('```\n'+tabulate(return_scores, headers=headers, tablefmt='fancy_grid')+'\n```\n', mimetype='text/plain')
         elif subcommand == 'games':
             return Response('```\n'+tabulate(games.find(), headers='keys', tablefmt='fancy_grid')+'\n```\n', mimetype='text/plain')
         elif subcommand == 'record':
@@ -126,6 +126,13 @@ class Root(Resource):
                     return "Couldn't find one or more players you put in..."
             else:
                 return "Please pass in valid player names"
+        elif subcommand == 'help':
+            helptext = '/pong add <player> - add a user\n\
+/pong rm <player> - delete a user\n\
+/pong record <player1> [> or <] <player2> - record a game\n\
+/pong games - list all the games recorded\n\
+/pong players - List the players and their scores'
+            return Response('```\n'+helptext+'\n```\n', mimetype='text/plain')
         else:
             return "Sorry, couldn't understand that."
 
