@@ -5,6 +5,7 @@ from pymongo import MongoClient, DESCENDING
 from trueskill import Rating, rate_1vs1, TrueSkill
 from tabulate import tabulate
 import datetime, os, requests
+import math
 
 app = Flask(__name__)
 api = Api(app)
@@ -19,6 +20,12 @@ env.make_as_global()
 def floor(mu, sigma):
     floor_factor = 2.0
     return mu - floor_factor * sigma
+
+def win_chance(player1, player2):
+    deltaMu = player1['mu'] - player2['mu']
+    sumSigma = player1['sigma'] ** 2 + player2['sigma'] ** 2
+    denominator = math.sqrt( 2 * env.beta ** 2 + sumSigma )
+    return env.cdf(deltaMu / denominator)
 
 class Root(Resource):
     def post(self):
@@ -80,6 +87,23 @@ class Root(Resource):
             return Response('```\n'+tabulate(return_scores, headers=headers, tablefmt='fancy_grid')+'\n```\n', mimetype='text/plain')
         elif subcommand == 'games':
             return Response('```\n'+tabulate(games.find(), headers='keys', tablefmt='fancy_grid')+'\n```\n', mimetype='text/plain')
+        elif subcommand == 'odds':
+            name1 = text[1].lower()
+            name2 = text[2].lower()
+
+            if not name1 or not name2:
+                return "Please enter 2 player names"
+
+            player1 = players.find_one({'name': name1})
+            player2 = players.find_one({'name': name2})
+
+            if not player1 or not player2:
+                return "Couldn't find both those names :("
+
+            winChance = win_chance(player1, player2)
+
+            return Response('```\n'+ name1 + "'s chance to beat " + name2 + ":  " + str(winChance) +'\n```\n', mimetype='text/plain')
+
         elif subcommand == 'record':
             player1 = text[1].lower()
             operator = text[2]
@@ -131,7 +155,8 @@ class Root(Resource):
 /pong rm <player> - delete a user\n\
 /pong record <player1> [> or <] <player2> - record a game\n\
 /pong games - list all the games recorded\n\
-/pong players - List the players and their scores'
+/pong players - List the players and their scores\n\
+/pong odds <player1> <player2> - shows chance that player 1 beats player 2'
             return Response('```\n'+helptext+'\n```\n', mimetype='text/plain')
         else:
             return "Sorry, couldn't understand that."
