@@ -33,15 +33,26 @@ class Root(Resource):
 
         #Register a new user
         if subcommand == 'register':
-            name = text[1]
-            this_player = players.find_one({'name': name})
-            if(this_player):
-                return this_player['name']+ ' already exists.'
-            else:
-                rating = Rating()
-                player = {'name': name, 'mu': rating.mu, 'sigma': rating.sigma, 'score': floor(rating.mu, rating.sigma)}
-                players.insert_one(player)
-                return name + ' was created!'
+            names = text[1:]
+            exists = []
+            added = []
+            for name in names:
+                this_player = players.find_one({'name': name})
+                if(this_player):
+                    exists.append(this_player['name'])
+                else:
+                    rating = Rating()
+                    player = {'name': name, 'mu': rating.mu, 'sigma': rating.sigma, 'score': floor(rating.mu, rating.sigma)}
+                    players.insert_one(player)
+                    added.append(player['name'])
+            return_text = ''
+            if(len(added) > 0):
+                return_text += 'Added ' + ','.join(added)
+            if(len(exists) > 0):
+                if len(return_text) > 0:
+                    return_text += ' and '
+                return_text += ','.join(exists) + " already exist."
+            return return_text
         elif subcommand == 'delete':
             names = text[1:]
             deleted = []
