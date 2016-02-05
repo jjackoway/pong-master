@@ -53,7 +53,7 @@ class Root(Resource):
                     return_text += ' and '
                 return_text += ','.join(exists) + " already exist."
             return return_text
-        elif subcommand == 'delete':
+        elif subcommand == 'rm':
             names = text[1:]
             deleted = []
             for name in names:
