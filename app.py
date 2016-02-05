@@ -11,6 +11,7 @@ api = Api(app)
 parser = reqparse.RequestParser()
 parser.add_argument('token')
 parser.add_argument('text')
+parser.add_argument('response_url')
 
 env = TrueSkill(draw_probability = 0.0, backend = 'mpmath', tau = .41666666667)
 env.make_as_global()
@@ -25,6 +26,7 @@ class Root(Resource):
         print request.data
         print request.headers
         print args['text']
+        print args['response_url']
         text = args['text'].lower().split()
         subcommand = text[0]
         print "Subcommand: " + subcommand
@@ -39,7 +41,8 @@ class Root(Resource):
                 rating = Rating()
                 player = {'name': name, 'mu': rating.mu, 'sigma': rating.sigma, 'score': floor(rating.mu, rating.sigma)}
                 players.insert_one(player)
-                return name + ' was created!'
+                # return name + ' was created!'
+                Request(args['response_url'], data=name + ' was created!')
         elif subcommand == 'delete':
             names = text[1:]
             deleted = []
