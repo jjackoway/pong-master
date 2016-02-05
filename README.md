@@ -31,3 +31,5 @@ Body:
 ```
 text=add kevin
 ```
+
+You can test this using something like Postman or Advanced Rest Client in Chrome.
