@@ -125,6 +125,8 @@ class Root(Resource):
                     return "Couldn't find one or more players you put in..."
             else:
                 return "Please pass in valid player names"
+        else:
+            return "Sorry, couldn't understand that."
 
 api.add_resource(Root, '/')
 
