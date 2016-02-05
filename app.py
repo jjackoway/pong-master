@@ -76,7 +76,7 @@ class Root(Resource):
                     score['sigma']
                 ]
                 return_scores.append(return_score)
-            return Response('```\n'+tabulate(return_scores, headers=headers, tablefmt='fancy_grid')+'\n```\n', mimetype='text/plain')
+            return Response('```\n'+tabulate(return_scores, headers=headers, tablefmt='fancy_grid')+'\n```\n', mimetype='application/')
         elif subcommand == 'games':
             return Response('```\n'+tabulate(games.find(), headers='keys', tablefmt='fancy_grid')+'\n```\n', mimetype='text/plain')
         elif subcommand == 'record':
