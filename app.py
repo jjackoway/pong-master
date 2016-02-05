@@ -64,7 +64,7 @@ class Root(Resource):
                 return "Couldn't find the player(s) you entered."
             deleted = ','.join(deleted)
             return "Kaboom. No more "+deleted+'.'
-        elif subcommand == 'scores':
+        elif subcommand == 'players':
             return_scores = []
             scores = players.find().sort('score', DESCENDING)
             headers = ['Name','Score','Mu','Sigma']
