@@ -145,7 +145,7 @@ class Root(Resource):
                                 'date': datetime.datetime.utcnow()
                            }
                     games.insert_one(game)
-                    return Response({"text": "Game recorded: " + winner_name + " beat " + loser_name, "response_type": "in_channel"}, mimetype='application/json')
+                    return "Congrats, " + winner_name + "!"
                 else:
                     return "Couldn't find one or more players you put in..."
             else:
