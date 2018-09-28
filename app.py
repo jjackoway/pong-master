@@ -14,6 +14,11 @@ parser.add_argument('token')
 parser.add_argument('text')
 parser.add_argument('response_url')
 
+#defaults...if you see adjusted numbers, it means we wanted to override them
+#mu = 25  default skill level...different number means that players cluster at a skill level NOT halfway between the worst and best player
+#sigma = 8.333333333333333  default uncertainty of that skill level.  higher number implies more even skill distribution, lower implies players cluster at mu
+#beta = 4.16666666666667  higher = game is more luck based...beta difference between players = 80% chance to win
+#tau = 0.083333333333333  higher = more expected actual player skill change over time
 env = TrueSkill(draw_probability = 0.0, backend = 'mpmath', tau = .41666666667)
 env.make_as_global()
 
