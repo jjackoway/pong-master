@@ -30,13 +30,13 @@ def win_chance(player1, player2):
 class Root(Resource):
     def post(self):
         args = parser.parse_args()
-        print request.data
-        print request.headers
-        print args['text']
-        print args['response_url']
+        print(request.data)
+        print(request.headers)
+        print(args['text'])
+        print(args['response_url'])
         text = args['text'].lower().split()
         subcommand = text[0]
-        print "Subcommand: " + subcommand
+        print("Subcommand: " + subcommand)
 
         #Register a new user
         if subcommand == 'add':
